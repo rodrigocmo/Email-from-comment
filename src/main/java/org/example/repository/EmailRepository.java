@@ -1,0 +1,7 @@
+package org.example.repository;
+
+import org.example.entity.Email;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface EmailRepository extends JpaRepository<Email, Long> {
+}
