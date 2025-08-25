@@ -97,3 +97,7 @@ $RECYCLE.BIN/
 .gradle
 classes
 build
+
+# Docker
+Dockerfile*
+docker-compose*

@@ -4,6 +4,7 @@ package org.example.service;
 import lombok.extern.slf4j.Slf4j;
 import org.example.entity.Email;
 import org.example.entity.dto.CommentCreatedEvent;
+import org.example.repository.EmailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -55,13 +56,15 @@ public class EmailService {
 
     private void saveEmailRecord(CommentCreatedEvent event, String subject,
                                  String status, String errorMessage) {
-        Email email = new Email();
-        email.setCommentId(event.getCommentId());
-        email.setRecipientEmail(event.getPostAuthorEmail());
-        email.setSubject(subject);
-        email.setSentAt(LocalDateTime.now());
-        email.setStatus(status);
-        email.setErrorMessage(errorMessage);
+        Email email =  Email.builder()
+                .commentId(event.getCommentId())
+                .recipientEmail(event.getPostAuthorEmail())
+                .subject(subject)
+                .sentAt(LocalDateTime.now())
+                .status(status)
+                .errorMessage(errorMessage)
+                .build();
+
 
         emailRepository.save(email);
     }
