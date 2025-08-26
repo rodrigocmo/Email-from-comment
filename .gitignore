@@ -98,6 +98,3 @@ $RECYCLE.BIN/
 classes
 build
 
-# Docker
-Dockerfile*
-docker-compose*

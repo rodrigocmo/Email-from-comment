@@ -1,0 +1,49 @@
+
+services:
+
+  mysql:
+    image: mysql:8.0
+    container_name: mysql
+    ports:
+      - "3307:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql12345
+      MYSQL_DATABASE: emailcomment
+    volumes:
+       - mysql-data:/var/lib/mysql
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/emailcomment
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: mysql12345
+      SPRING_JPA_HIBERNATE_DDL_AUTO: update
+    depends_on:
+      - mysql
+      - kafka
+
+  kafka:
+    image: confluentinc/cp-kafka:7.6.1  # versão recente com KRaft
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    environment:
+      # Identificador único do cluster Kafka
+      CLUSTER_ID: "MkU3OEVBNTcwNTJENDM2Qk" # pode ser qualquer UUID, use `kafka-storage random-uuid` se quiser gerar
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_LISTENERS: PLAINTEXT://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+
+volumes:
+  kafka-data:
+  mysql-data:
