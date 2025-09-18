@@ -1,10 +1,11 @@
 package org.example.controller;
 
 
+import org.example.entity.Post;
 import org.example.entity.User;
+import org.example.service.PostService;
 import org.example.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,20 +15,17 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/posts")
 
-public class UserController {
+public class PostController {
 
 @Autowired
-UserService userService;
+PostService postService;
 
-    @GetMapping(path = "/testedenovo")
-    public String outroTeste(){
-    return "ooutroteste";
-    }
+
     @GetMapping
-    public ResponseEntity<List<User>> getAllUsers(){
-            return Optional.of(userService.getAllUsers()).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
+    public ResponseEntity<List<Post>> getAllUsers(){
+            return Optional.of(postService.getAllPosts()).map(ResponseEntity::ok).orElse(ResponseEntity.noContent().build());
     }
 
 }

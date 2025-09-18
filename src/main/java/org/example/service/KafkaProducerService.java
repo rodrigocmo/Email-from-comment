@@ -20,5 +20,6 @@ public class KafkaProducerService {
                 event.getCommentId(), event.getPostId());
 
         kafkaTemplate.send(TOPIC, event.getCommentId().toString(), event);
+
     }
 }

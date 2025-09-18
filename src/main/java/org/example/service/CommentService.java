@@ -44,17 +44,17 @@ public class CommentService {
 
         // 3. Só envia evento se o autor do post quer receber notificações
         if (postAuthor != null && postAuthor.getEmailNotifications()) {
-            CommentCreatedEvent event = new CommentCreatedEvent(
-                    savedComment.getId(),
-                    post.getId(),
-                    post.getTitle(),
-                    postAuthor.getEmail(),
-                    postAuthor.getName(),
-                    commentAuthor.getName(),
-                    savedComment.getContent(),
-                    savedComment.getCreatedAt(),
-                    postAuthor.getEmailNotifications()
-            );
+            CommentCreatedEvent event = CommentCreatedEvent.builder()
+                    .commentId(savedComment.getId())
+                    .postId(post.getId())
+                    .postTitle(post.getTitle())
+                    .postAuthorEmail(postAuthor.getEmail())
+                    .postAuthorName(postAuthor.getName())
+                    .commentAuthorName(commentAuthor.getName())
+                    .commentContent(savedComment.getContent())
+                    .createdAt(savedComment.getCreatedAt())
+                    .emailNotificationsEnabled(postAuthor.getEmailNotifications())
+                    .build();
 
             // 4. Publicar no Kafka
             kafkaProducerService.publishCommentCreated(event);

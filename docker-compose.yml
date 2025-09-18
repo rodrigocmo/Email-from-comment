@@ -11,6 +11,9 @@ services:
       MYSQL_DATABASE: emailcomment
     volumes:
        - mysql-data:/var/lib/mysql
+        # ⬇️ ADICIONE ESTA LINHA para importar seus dados automaticamente:
+       - ./init-data.sql:/docker-entrypoint-initdb.d/01-init-data.sql
+
   app:
     build: .
     ports:
