@@ -11,7 +11,10 @@ import org.example.repository.CommentRepository;
 import org.example.repository.PostRepository;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.event.TransactionPhase;
+import org.springframework.transaction.event.TransactionalEventListener;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -31,10 +34,13 @@ public class CommentService {
 
     @Autowired
     private KafkaProducerService kafkaProducerService;
+    @Autowired
+    private ApplicationEventPublisher applicationEventPublisher;
 
     @Transactional
     public Comment createComment(Comment comment) {
         saveComment(comment);
+        applicationEventPublisher.publishEvent(comment);
         construirEvento(comment);
         return comment;
     }
@@ -48,6 +54,7 @@ public class CommentService {
         }
     }
 
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     public void construirEvento(Comment comment){
         Post post = postRepository.findById(comment.getPostId()).orElse(null);
         User postAuthor = userRepository.findById(post.getAuthorId()).orElse(null);
