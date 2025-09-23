@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @Service
 @Slf4j
@@ -33,33 +34,39 @@ public class CommentService {
 
     @Transactional
     public Comment createComment(Comment comment) {
-        // 1. Salvar comentário
-        comment.setCreatedAt(LocalDateTime.now());
-        Comment savedComment = commentRepository.save(comment);
+        saveComment(comment);
+        construirEvento(comment);
+        return comment;
+    }
 
-        // 2. Buscar dados para o evento
+    public void saveComment(Comment comment){
+        try {
+            comment.setCreatedAt(LocalDateTime.now());
+            commentRepository.save(comment);
+        }catch (Exception e){
+            throw new RuntimeException("Falha ao salvar comentario");
+        }
+    }
+
+    public void construirEvento(Comment comment){
         Post post = postRepository.findById(comment.getPostId()).orElse(null);
         User postAuthor = userRepository.findById(post.getAuthorId()).orElse(null);
         User commentAuthor = userRepository.findById(comment.getAuthorId()).orElse(null);
 
-        // 3. Só envia evento se o autor do post quer receber notificações
-        if (postAuthor != null && postAuthor.getEmailNotifications()) {
+        if (Objects.nonNull(postAuthor) && postAuthor.getEmailNotifications()) {
             CommentCreatedEvent event = CommentCreatedEvent.builder()
-                    .commentId(savedComment.getId())
+                    .commentId(comment.getId())
                     .postId(post.getId())
                     .postTitle(post.getTitle())
                     .postAuthorEmail(postAuthor.getEmail())
                     .postAuthorName(postAuthor.getName())
                     .commentAuthorName(commentAuthor.getName())
-                    .commentContent(savedComment.getContent())
-                    .createdAt(savedComment.getCreatedAt())
+                    .commentContent(comment.getContent())
+                    .createdAt(comment.getCreatedAt())
                     .emailNotificationsEnabled(postAuthor.getEmailNotifications())
                     .build();
 
-            // 4. Publicar no Kafka
             kafkaProducerService.publishCommentCreated(event);
         }
-
-        return savedComment;
     }
 }
