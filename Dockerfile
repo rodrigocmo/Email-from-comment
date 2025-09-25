@@ -7,6 +7,7 @@ FROM eclipse-temurin:21-jre
 COPY --from=build /app/target/meujar.jar /app/app.jar
 WORKDIR /app
 EXPOSE 8080 5005
-CMD ["java", "-jar", "app.jar","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
+
+CMD ["java", "-jar", "app.jar","-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005","-Dlogging.level.org.hibernate.SQL=DEBUG","-Dlogging.level.org.hibernate.type.descriptor.sql.BasicBinder=TRACE"]
 
 

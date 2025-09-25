@@ -35,6 +35,4 @@ public class Email {
 
     @Column(name = "error_message", columnDefinition = "TEXT")
     private String errorMessage;
-
-    // constructors, getters, setters
 }
