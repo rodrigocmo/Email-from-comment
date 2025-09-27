@@ -24,20 +24,23 @@ services:
     ports:
       - "8080:8080"
       - "5005:5005"
-
     environment:
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/emailcomment
       SPRING_DATASOURCE_USERNAME: root
       SPRING_DATASOURCE_PASSWORD: mysql12345
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
+      SPRING_JPA_SHOW_SQL: "true"
+      LOGGING_LEVEL_ORG_HIBERNATE_SQL: DEBUG
+      LOGGING_LEVEL_ORG_HIBERNATE_ORM_JDBC_BIND: TRACE
+      LOGGING_LEVEL_ORG_HIBERNATE_TYPE_DESCRIPTOR: TRACE
       JAVA_TOOL_OPTIONS: "-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"
+
     depends_on:
       mysql:
         condition: service_healthy
       kafka:
         condition: service_healthy
     restart: unless-stopped
-    #condition depende do healthcheck adicionado nos outros containers
 
   kafka:
     image: confluentinc/cp-kafka:7.6.1
