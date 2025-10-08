@@ -40,6 +40,8 @@ services:
         condition: service_healthy
       kafka:
         condition: service_healthy
+      redis:
+        condition: service_healthy
     restart: unless-stopped
 
   kafka:
@@ -69,6 +71,21 @@ services:
     volumes:
       - kafka-data:/var/lib/kafka/data
 
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    ports:
+      - "6379:6379"
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      timeout: 3s
+      retries: 5
+      interval: 5s
+    volumes:
+      - redis-data:/data
+    command: redis-server --appendonly yes
+
 volumes:
   kafka-data:
   mysql-data:
+  redis-data:
