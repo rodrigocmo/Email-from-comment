@@ -24,19 +24,11 @@ public class KafkaProducerService {
     @Autowired
     private KafkaTemplate<String, CommentCreatedEvent> kafkaTemplate;
 
-    public void publishCommentCreated(CommentCreatedEvent event) {
-        log.info("Enviando evento para Kafka: commentId={}, postId={}",
-                event.getCommentId(), event.getPostId());
-
-        kafkaTemplate.send(TOPIC, event.getCommentId().toString(), event);
-
-    }
 
     public void publishCommentCreated(Comment comment) {
-        CommentCreatedEvent event = CommentCreatedEvent.create(comment);
 
-        // ========== PARTICIONAMENTO PARA GARANTIR ORDEM ==========
-        // Usa postId como chave para garantir que comentários do mesmo post
+        CommentCreatedEvent event = CommentCreatedEvent.create(comment);
+        //postId como chave para garantir que comentários do mesmo post
         // vão sempre para a mesma partição (mantendo ordem)
         String partitionKey = comment.getPostId().toString();
 

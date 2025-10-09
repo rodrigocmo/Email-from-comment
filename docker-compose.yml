@@ -16,7 +16,7 @@ services:
       interval: 10s
     volumes:
        - mysql-data:/var/lib/mysql
-        # ⬇️ ADICIONE ESTA LINHA para importar seus dados automaticamente:
+        # ⬇️ Importar dados sql
        - ./init-data.sql:/docker-entrypoint-initdb.d/01-init-data.sql
 
   app:

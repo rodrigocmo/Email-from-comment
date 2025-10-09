@@ -100,6 +100,40 @@ INSERT INTO `posts` VALUES (1,'2024-01-25 09:00:00.000000',1,'2024-01-25 09:00:0
 UNLOCK TABLES;
 
 --
+-- Table structure for table `processed_events`
+--
+
+DROP TABLE IF EXISTS `processed_events`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!50503 SET character_set_client = utf8mb4 */;
+CREATE TABLE `processed_events` (
+  `id` bigint NOT NULL AUTO_INCREMENT,
+  `event_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `event_type` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `payload` text COLLATE utf8mb4_unicode_ci,
+  `processed_at` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `status` varchar(20) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `retry_count` int DEFAULT '0',
+  `error_message` text COLLATE utf8mb4_unicode_ci,
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `event_id` (`event_id`),
+  KEY `idx_event_id` (`event_id`),
+  KEY `idx_processed_at` (`processed_at`),
+  KEY `idx_event_type` (`event_type`),
+  KEY `idx_status` (`status`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `processed_events`
+--
+
+LOCK TABLES `processed_events` WRITE;
+/*!40000 ALTER TABLE `processed_events` DISABLE KEYS */;
+/*!40000 ALTER TABLE `processed_events` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
 -- Table structure for table `users`
 --
 
@@ -138,4 +172,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2025-09-18 13:53:37
+-- Dump completed on 2025-10-09 15:16:39

@@ -61,19 +61,7 @@ public class CommentService {
         User commentAuthor = userRepository.findById(comment.getAuthorId()).orElse(null);
 
         if (Objects.nonNull(postAuthor) && postAuthor.getEmailNotifications()) {
-            CommentCreatedEvent event = CommentCreatedEvent.builder()
-                    .commentId(comment.getId())
-                    .postId(post.getId())
-                    .postTitle(post.getTitle())
-                    .postAuthorEmail(postAuthor.getEmail())
-                    .postAuthorName(postAuthor.getName())
-                    .commentAuthorName(commentAuthor.getName())
-                    .commentContent(comment.getContent())
-                    .createdAt(comment.getCreatedAt())
-                    .emailNotificationsEnabled(postAuthor.getEmailNotifications())
-                    .build();
-
-            kafkaProducerService.publishCommentCreated(event);
+            kafkaProducerService.publishCommentCreated(comment);
         }
     }
 }
